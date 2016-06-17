@@ -83,11 +83,82 @@ public class LancamentoDao {
 		return ll;
 	}
 	
-	public void remover(){
+	public void alterar(LancamentoDto dto){
+		Connection conexao;
+		PreparedStatement stmt;
 		
+		try{
+			sql = "update lancamento set "
+					+ "descricao = '" + dto.getDescricao() + "'"
+					+ " ,valor = " +dto.getValor() 
+					+ " ,dataCadastro = '" +dto.getDataCadastro() + "'" 
+					+ " ,tipo = '" +dto.getTipo() + "'"
+					+ " where id =" + dto.getId();
+			
+			conexao = ConexaoMySQL.getConexaoMySQL();
+			stmt = conexao.prepareStatement(sql);
+			stmt.execute();  
+			stmt.close();
+		}catch(SQLException s){
+			System.err.print(s.getMessage());
+		}
+		
+		ConexaoMySQL.FecharConexao();
 	}
 	
-	public void alterar(){
+	public void remover(LancamentoDto dto){
+		Connection conexao;
+		PreparedStatement stmt;
 		
+		try{
+			sql = "delete from lancamento where id = " + dto.getId();
+			System.out.println(sql);
+			conexao = ConexaoMySQL.getConexaoMySQL();
+			stmt = conexao.prepareStatement(sql);
+			stmt.execute();  
+			stmt.close();
+		}catch(SQLException s){
+			System.err.print(s.getMessage());
+		}
+		
+		ConexaoMySQL.FecharConexao();
+	}
+	
+	public List<LancamentoDto> filtrar(LancamentoDto dto){
+		Connection conexao;
+		PreparedStatement stmt;
+		List<LancamentoDto> ll = new LinkedList();;
+		try{
+			
+			sql = "select id,descricao,valor, dataCadastro, tipo from lancamento where (id = " + dto.getId() + " or " + dto.getId() + " = 0)"
+																				 + " and (descricao = '" + dto.getDescricao() + "' or '" + dto.getDescricao() + "' = '0')"
+																				 + " and (valor = " + dto.getValor() + " or " + dto.getValor() + " = 0)"
+																				 + " and (tipo = '" + dto.getTipo() + "' or '" + dto.getTipo() + "' = '0')";	
+			System.out.println(sql);
+			conexao = ConexaoMySQL.getConexaoMySQL();
+			stmt = conexao.prepareStatement(sql);
+			ResultSet rs = stmt.executeQuery();            
+			 
+			while (rs.next()) {
+			  int id = rs.getInt("id");
+			  double valor = rs.getDouble("valor");
+			  String descricao = rs.getString("descricao");
+			  String tipo = rs.getString("tipo");
+			  Date dataCadastro = rs.getDate("dataCadastro");
+			  
+
+			  //Assuming you have a user object
+			  LancamentoDto l = new LancamentoDto(id,descricao,dataCadastro, tipo, valor);
+
+			  ll.add(l);
+			}
+			stmt.close();
+			ConexaoMySQL.FecharConexao();
+			
+			
+		}catch(SQLException s){
+			System.err.print(s.getMessage());
+		}
+		return ll;
 	}
 }

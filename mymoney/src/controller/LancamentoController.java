@@ -13,7 +13,19 @@ public class LancamentoController {
 	public String cadastrarLancamento(){
 		LancamentoDao dao = new LancamentoDao();
 		dao.cadastrar(dto);
-		return "Ok";
+		return "Cadastrado";
+	}
+	
+	public String alterarLancamento(){
+		LancamentoDao dao = new LancamentoDao();
+		dao.alterar(dto);
+		return "Alterado";
+	}
+	
+	public String removerLancamento(){
+		LancamentoDao dao = new LancamentoDao();
+		dao.remover(dto);
+		return "Removido";
 	}
 
 	public LancamentoDto getDto() {
@@ -29,6 +41,13 @@ public class LancamentoController {
 		return dao.consultar();
 	
 	}
+	
+	public List<LancamentoDto> filtrarLancamentos(LancamentoDto dto){
+		LancamentoDao dao = new LancamentoDao();
+		return dao.filtrar(dto);
+	
+	}
+	
 	
 	
 	
